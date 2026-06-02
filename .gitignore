@@ -169,3 +169,18 @@ credentials/
 *.tgz
 *.rar
 *.7z
+
+# ---------- Wolfram ----------
+*.mx
+*.wl~
+*.nb~
+
+# ---------- Ruliology outputs ----------
+data/runs/*
+data/metrics/*
+data/figures/*
+data/exports/*
+!data/runs/.gitkeep
+!data/metrics/.gitkeep
+!data/figures/.gitkeep
+!data/exports/.gitkeep
