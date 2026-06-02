@@ -1,5 +1,7 @@
-Get[FileNameJoin[{DirectoryName[DirectoryName[$InputFileName]], "src", "Morphologies.wl"}]];
-Get[FileNameJoin[{DirectoryName[DirectoryName[$InputFileName]], "src", "ModelCore.wl"}]];
+projectRoot = If[StringQ[$InputFileName] && $InputFileName =!= "", DirectoryName[DirectoryName[$InputFileName]], Directory[]];
+
+Get[FileNameJoin[{projectRoot, "src", "Morphologies.wl"}]];
+Get[FileNameJoin[{projectRoot, "src", "ModelCore.wl"}]];
 
 Needs["RuliologyUrbanDynamics`Morphologies`"];
 Needs["RuliologyUrbanDynamics`ModelCore`"];

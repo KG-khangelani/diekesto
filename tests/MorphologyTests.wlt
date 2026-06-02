@@ -1,4 +1,6 @@
-Get[FileNameJoin[{DirectoryName[DirectoryName[$InputFileName]], "src", "Morphologies.wl"}]];
+projectRoot = If[StringQ[$InputFileName] && $InputFileName =!= "", DirectoryName[DirectoryName[$InputFileName]], Directory[]];
+
+Get[FileNameJoin[{projectRoot, "src", "Morphologies.wl"}]];
 
 Needs["RuliologyUrbanDynamics`Morphologies`"];
 
