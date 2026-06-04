@@ -15,13 +15,12 @@ FieldMean[state_Association, field_String] := Mean[Flatten[state[field]]]
 
 FieldVariance[state_Association, field_String] := Variance[Flatten[state[field]]]
 
-FieldEntropy[state_Association, field_String, bins_Integer : 20] := Module[{values, indices, counts, probs},
+FieldEntropy[state_Association, field_String, bins_Integer : 20] := Module[{values, counts, probs},
   values = Clip[Flatten[state[field]], {0, 1}];
-  indices = Floor[values bins];
-  indices = Clip[indices, {0, bins - 1}];
-  counts = Lookup[Counts[indices], Range[0, bins - 1], 0];
+  counts = BinCounts[values, {0, 1 + $MachineEpsilon, 1./bins}];
+  If[Total[counts] == 0, Return[0.]];
   probs = Select[N[counts/Total[counts]], # > 0 &];
-  -Total[probs Log2[probs]]
+  N[-Total[probs Log2[probs]]]
 ]
 
 TrapIndex[state_Association] := Module[{risk, activity, trapped},
@@ -33,14 +32,14 @@ TrapIndex[state_Association] := Module[{risk, activity, trapped},
 
 StateMetrics[state_Association] := Join[
   <|"Step" -> state["Step"], "TrapIndex" -> TrapIndex[state]|>,
-  Association[Join @@ Table[
+  Association[Flatten[Table[
     {
       field <> "Mean" -> FieldMean[state, field],
       field <> "Variance" -> FieldVariance[state, field],
       field <> "Entropy" -> FieldEntropy[state, field]
     },
     {field, Fields}
-  ]]
+  ]]]
 ]
 
 HistoryMetrics[history_List] := StateMetrics /@ history

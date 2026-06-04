@@ -41,12 +41,24 @@ runSummary = <|
   "OutputLocation" -> FileNameJoin[{projectRoot, "data"}]
 |>;
 
-ExportRunJSON[runSummary, FileNameJoin[{projectRoot, "data", "runs", runBase <> ".json"}]];
-ExportMetricsCSV[metrics, FileNameJoin[{projectRoot, "data", "metrics", runBase <> "-metrics.csv"}]];
-ExportFigure[StatePanel[finalState], FileNameJoin[{projectRoot, "data", "figures", runBase <> "-fields.png"}]];
-ExportFigure[MetricTimeSeriesPlot[metrics, "TrapIndex"], FileNameJoin[{projectRoot, "data", "figures", runBase <> "-trap-index.png"}]];
+jsonPath = FileNameJoin[{projectRoot, "data", "runs", runBase <> ".json"}];
+csvPath = FileNameJoin[{projectRoot, "data", "metrics", runBase <> "-metrics.csv"}];
+fieldsFigurePath = FileNameJoin[{projectRoot, "data", "figures", runBase <> "-fields.png"}];
+trapFigurePath = FileNameJoin[{projectRoot, "data", "figures", runBase <> "-trap-index.png"}];
+
+ExportRunJSON[runSummary, jsonPath];
+ExportMetricsCSV[metrics, csvPath];
+ExportFigure[StatePanel[finalState], fieldsFigurePath];
+ExportFigure[MetricTimeSeriesPlot[metrics, "TrapIndex"], trapFigurePath];
+
+requiredOutputs = {jsonPath, csvPath, fieldsFigurePath, trapFigurePath};
+missingOutputs = Select[requiredOutputs, ! FileExistsQ[#] || FileByteCount[#] == 0 &];
+If[Length[missingOutputs] > 0,
+  Print["Export failed for: ", missingOutputs];
+  Quit[1]
+];
 
 Print["Completed ", experimentId];
-Print["Run summary: ", FileNameJoin[{projectRoot, "data", "runs", runBase <> ".json"}]];
-Print["Metrics: ", FileNameJoin[{projectRoot, "data", "metrics", runBase <> "-metrics.csv"}]];
+Print["Run summary: ", jsonPath];
+Print["Metrics: ", csvPath];
 Print["Figures: ", FileNameJoin[{projectRoot, "data", "figures"}]];
